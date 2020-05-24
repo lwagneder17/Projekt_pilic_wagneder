@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/background"
-    tools:context=".RegisterActivity">
+    tools:context=".Activities.RegisterActivity">
 
     <Button
         android:id="@+id/camera_button"
@@ -14,12 +14,14 @@
         android:layout_marginStart="105dp"
         android:layout_marginTop="44dp"
         android:layout_marginEnd="105dp"
+
         android:background="@drawable/text_style"
         android:gravity="center"
         android:text="Camera"
         android:textColor="#FFFFFF"
         android:textSize="20dp"
         android:textStyle="bold"
+
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.505"
         app:layout_constraintStart_toStartOf="parent"
@@ -32,14 +34,15 @@
         android:layout_marginStart="105dp"
         android:layout_marginTop="116dp"
         android:layout_marginEnd="105dp"
+
         android:background="@drawable/text_style"
         android:gravity="center"
         android:hint="Username"
         android:textColor="#FFFFFF"
         android:textColorHint="@color/colorPrimaryLight"
-
         android:textSize="20dp"
         android:textStyle="bold"
+
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.505"
         app:layout_constraintStart_toStartOf="parent"
@@ -52,14 +55,16 @@
         android:layout_marginStart="105dp"
         android:layout_marginTop="192dp"
         android:layout_marginEnd="105dp"
+
         android:background="@drawable/text_style"
         android:gravity="center"
         android:hint="Password"
         android:textColor="#FFFFFF"
         android:textColorHint="@color/colorPrimaryLight"
-
+        android:inputType="textPassword"
         android:textSize="20dp"
         android:textStyle="bold"
+
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.505"
         app:layout_constraintStart_toStartOf="parent"
@@ -72,11 +77,13 @@
         android:layout_marginStart="105dp"
         android:layout_marginTop="30dp"
         android:layout_marginEnd="105dp"
+
         android:background="@drawable/button_style"
         android:text="Register"
         android:textColor="#FFFFFF"
         android:textSize="20dp"
         android:textStyle="bold"
+
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"

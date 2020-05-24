@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "311801883314",
+    "firebase_url": "https://tournamaker-a1024.firebaseio.com",
+    "project_id": "tournamaker-a1024",
+    "storage_bucket": "tournamaker-a1024.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:311801883314:android:2273d57eef65b819a6f7ab",
+        "android_client_info": {
+          "package_name": "at.htlgkr.tournamaker"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "311801883314-lvc7fl7pt8um21ahj63o3kr80sckjtqd.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBnS1bYaShVHMxCvWZZ8Q-glfI3cgb_ctg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "311801883314-lvc7fl7pt8um21ahj63o3kr80sckjtqd.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

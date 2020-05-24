@@ -6,14 +6,13 @@ public class Benutzer
 {
     private String username;
     private String hashedPassword;
-    private Bitmap picture;
-    private byte[] salt;
+    private String encodedPicture;
 
-    public Benutzer(String username, String hashedPassword, Bitmap picture, byte[] salt)
+    public Benutzer(String username, String hashedPassword, String picture)
     {
         this.username = username;
         this.hashedPassword = hashedPassword;
-        this.picture = picture;
+        this.encodedPicture = picture;
     }
 
     public String getUsername() {
@@ -24,7 +23,9 @@ public class Benutzer
         return hashedPassword;
     }
 
-    public Bitmap getPicture() {
-        return picture;
+    public String getPicture()
+    {
+        return encodedPicture;
     }
+
 }
