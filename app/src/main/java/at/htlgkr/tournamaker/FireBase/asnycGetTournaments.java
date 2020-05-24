@@ -20,7 +20,7 @@ import java.util.List;
 
 import at.htlgkr.tournamaker.Benutzer;
 
-public class asyncGetAllUsers extends AsyncTask<String, Integer, List<Benutzer>>
+public class asnycGetTournaments extends AsyncTask<String, Integer, List<Benutzer>>
 {
 
     @Override

@@ -1,18 +1,19 @@
 package at.htlgkr.tournamaker;
 
-import android.graphics.Bitmap;
+import java.io.Serializable;
 
-public class Benutzer
+public class Benutzer implements Serializable
 {
     private String username;
     private String hashedPassword;
-    private String encodedPicture;
 
-    public Benutzer(String username, String hashedPassword, String picture)
+    public Benutzer() {
+    }
+
+    public Benutzer(String username, String hashedPassword)
     {
         this.username = username;
         this.hashedPassword = hashedPassword;
-        this.encodedPicture = picture;
     }
 
     public String getUsername() {
@@ -21,11 +22,6 @@ public class Benutzer
 
     public String getHashedPassword() {
         return hashedPassword;
-    }
-
-    public String getPicture()
-    {
-        return encodedPicture;
     }
 
 }
