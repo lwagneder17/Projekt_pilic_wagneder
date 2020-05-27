@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background"
+    tools:context=".ui.create.createFragment" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <EditText
+            android:id="@+id/tv_tournamentname"
+            android:layout_width="300dp"
+            android:layout_height="50dp"
+            android:layout_marginLeft="50dp"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/text_style"
+            android:gravity="center"
+            android:hint="Tournament-Name"
+            android:inputType="textPersonName"
+            android:textColor="#fff"
+            android:textColorHint="@color/colorPrimaryLight"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/tv_number_of_participants"
+            android:layout_width="300dp"
+            android:layout_height="50dp"
+            android:layout_marginLeft="50dp"
+            android:layout_marginTop="15dp"
+            android:background="@drawable/text_style"
+            android:ems="10"
+            android:gravity="center"
+            android:hint="Number of participants"
+            android:inputType="textPersonName"
+            android:textColor="#fff"
+            android:textColorHint="@color/colorPrimaryLight"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/tv_gamename"
+            android:layout_width="300dp"
+            android:layout_height="50dp"
+            android:layout_marginLeft="50dp"
+            android:layout_marginTop="15dp"
+            android:background="@drawable/text_style"
+            android:ems="10"
+            android:gravity="center"
+            android:hint="Which Game?"
+            android:inputType="textPersonName"
+            android:textColor="#fff"
+            android:textColorHint="@color/colorPrimaryLight"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <Switch
+            android:id="@+id/switch_private_tournament"
+            android:layout_width="150dp"
+            android:layout_height="50dp"
+            android:layout_marginLeft="125dp"
+            android:layout_marginTop="15dp"
+            android:background="@drawable/text_style"
+            android:drawableLeft="@drawable/inkognito"
+            android:paddingLeft="30dp" />
+
+        <EditText
+            android:id="@+id/tv_key"
+            android:layout_width="300dp"
+            android:layout_height="50dp"
+            android:layout_marginLeft="50dp"
+            android:layout_marginTop="15dp"
+            android:background="@drawable/text_style"
+            android:ems="10"
+            android:gravity="center"
+            android:hint="Key (only when private)"
+            android:inputType="textPersonName"
+            android:textColor="#fff"
+            android:textColorHint="@color/colorPrimaryLight"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/create_button"
+            android:layout_width="200dp"
+            android:layout_height="80dp"
+            android:layout_marginLeft="100dp"
+            android:layout_marginTop="30dp"
+            android:background="@drawable/button_style"
+            android:text="Create "
+            android:textColor="#FFF"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+</FrameLayout>
