@@ -81,7 +81,7 @@ public class RegisterActivity extends AppCompatActivity
             startActivityForResult(intent, REQUEST_ID_IMAGE_CAPTURE);
         });
 
-        Button register = findViewById(R.id.login_button);
+        Button register = findViewById(R.id.signoff_button);
         register.setOnClickListener(v -> onClickRegister());
 
 

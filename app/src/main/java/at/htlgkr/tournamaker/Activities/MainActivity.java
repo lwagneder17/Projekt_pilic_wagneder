@@ -35,6 +35,7 @@ public class MainActivity extends AppCompatActivity
 {
     private DatabaseReference firebaseDatabase;
     private List<Benutzer> allBenutzer = new ArrayList<>();
+    private Benutzer currentBenutzer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,14 +69,14 @@ public class MainActivity extends AppCompatActivity
             allBenutzer = (List<Benutzer>) extra.getSerializable("benutzer");
         }
 
-        TextView register = findViewById(R.id.tv_register);
+        TextView register = findViewById(R.id.tv_welcome);
         register.setOnClickListener(v ->
         {
             Intent i = new Intent(MainActivity.this, RegisterActivity.class);
             startActivity(i);
         });
 
-        Button login = findViewById(R.id.login_button);
+        Button login = findViewById(R.id.signoff_button);
         login.setOnClickListener(v -> onClickLogin());
 
     }
@@ -95,7 +96,7 @@ public class MainActivity extends AppCompatActivity
                     .filter((b) -> b.getUsername().equals(username) && b.getHashedPassword().equals(securedPassword))
                     .count() == 1)
                 {
-                    Benutzer currentBenutzer = allBenutzer.stream()
+                    currentBenutzer = allBenutzer.stream()
                             .filter((b) -> b.getUsername().equals(username) && b.getHashedPassword().equals(securedPassword))
                             .collect(Collectors.toList()).get(0);
 

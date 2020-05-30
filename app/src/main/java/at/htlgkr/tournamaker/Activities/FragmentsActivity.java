@@ -1,5 +1,6 @@
 package at.htlgkr.tournamaker.Activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
@@ -10,16 +11,31 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import at.htlgkr.tournamaker.Benutzer;
 import at.htlgkr.tournamaker.R;
 
-public class FragmentsActivity extends AppCompatActivity {
+public class FragmentsActivity extends AppCompatActivity
+{
+    public static List<Benutzer> allBenutzer = new ArrayList<>();
+    public static Benutzer currentBenutzer;
+    public static StorageReference firebaseStorage;
+    public static DatabaseReference firebaseDatabase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fragments);
         getSupportActionBar().hide();
+        firebaseStorage = FirebaseStorage.getInstance().getReference();
+        firebaseDatabase = FirebaseDatabase.getInstance().getReference("users");
 
         View decorView = getWindow().getDecorView();
         int uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
@@ -35,5 +51,16 @@ public class FragmentsActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(navView, navController);
+
+        Intent i = getIntent();
+        if(i != null)
+        {
+            if(i.getExtras() != null)
+            {
+                Bundle extra = i.getBundleExtra("bundle");
+                allBenutzer = (List<Benutzer>) extra.getSerializable("benutzer");
+                currentBenutzer = (Benutzer) extra.getSerializable("current");
+            }
+        }
     }
 }

@@ -6,6 +6,7 @@ public class Benutzer implements Serializable
 {
     private String username;
     private String hashedPassword;
+    private boolean privateSettings = false;
 
     public Benutzer() {
     }
@@ -24,4 +25,12 @@ public class Benutzer implements Serializable
         return hashedPassword;
     }
 
+
+    public boolean isPrivateSettings() {
+        return privateSettings;
+    }
+
+    public void setPrivateSettings(boolean privateSettings) {
+        this.privateSettings = privateSettings;
+    }
 }
