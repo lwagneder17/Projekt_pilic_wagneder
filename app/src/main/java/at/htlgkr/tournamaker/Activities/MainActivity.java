@@ -17,6 +17,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.gson.Gson;
 
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
@@ -26,8 +27,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import at.htlgkr.tournamaker.Benutzer;
-import at.htlgkr.tournamaker.Hasher;
+import at.htlgkr.tournamaker.Classes.Benutzer;
+import at.htlgkr.tournamaker.Classes.Hasher;
 import at.htlgkr.tournamaker.R;
 
 
@@ -50,9 +51,12 @@ public class MainActivity extends AppCompatActivity
             public void onDataChange(@NonNull DataSnapshot dataSnapshot)
             {
                 allBenutzer.clear();
+                Gson gson = new Gson();
                 for(DataSnapshot ds : dataSnapshot.getChildren())
                 {
-                    allBenutzer.add(ds.getValue(Benutzer.class));
+                    String s = (String) ds.getValue();
+                    allBenutzer.add(gson.fromJson(s, Benutzer.class));
+
                 }
             }
 
@@ -76,7 +80,7 @@ public class MainActivity extends AppCompatActivity
             startActivity(i);
         });
 
-        Button login = findViewById(R.id.signoff_button);
+        Button login = findViewById(R.id.login_button);
         login.setOnClickListener(v -> onClickLogin());
 
     }

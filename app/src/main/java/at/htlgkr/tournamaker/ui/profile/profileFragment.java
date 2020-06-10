@@ -11,26 +11,35 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.preference.PreferenceManager;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.storage.StorageReference;
+import com.google.gson.Gson;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 import at.htlgkr.tournamaker.Activities.FragmentsActivity;
 import at.htlgkr.tournamaker.Activities.MainActivity;
-import at.htlgkr.tournamaker.Benutzer;
-import at.htlgkr.tournamaker.NotificationService;
+import at.htlgkr.tournamaker.Activities.TournamentActivity;
+import at.htlgkr.tournamaker.Classes.Benutzer;
+import at.htlgkr.tournamaker.Classes.Hasher;
 import at.htlgkr.tournamaker.Preferences.MySettingsActivity;
+import at.htlgkr.tournamaker.Preferences.NotificationService;
 import at.htlgkr.tournamaker.R;
 
 /**
@@ -38,14 +47,11 @@ import at.htlgkr.tournamaker.R;
  */
 public class profileFragment extends Fragment
 {
-    private List<Benutzer> allBenutzer = FragmentsActivity.allBenutzer;
     private Benutzer currentBenutzer = FragmentsActivity.currentBenutzer;
+    private List<Benutzer> allBenutzer = FragmentsActivity.allBenutzer;
     private static StorageReference firebaseStorage = FragmentsActivity.firebaseStorage;
-    private static DatabaseReference firebaseDatabase = FragmentsActivity.firebaseDatabase;
+    private static DatabaseReference benutzerDataBase = FragmentsActivity.benutzerDataBase;
     private View activityView;
-
-    private SharedPreferences prefs;
-    private SharedPreferences.OnSharedPreferenceChangeListener preferencesChangeListener;
 
     public profileFragment()
     {
@@ -58,9 +64,14 @@ public class profileFragment extends Fragment
     {
         activityView = inflater.inflate(R.layout.fragment_profile, container, false);
 
-        prefs = PreferenceManager.getDefaultSharedPreferences(activityView.getContext());
-        preferencesChangeListener = this::preferenceChanged;
-        prefs.registerOnSharedPreferenceChangeListener(preferencesChangeListener);
+        Button friend = activityView.findViewById(R.id.friend_button);
+        friend.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)
+            {
+                friendButtonClick();
+            }
+        });
 
         ImageView profilePic = activityView.findViewById(R.id.profilePic);
         firebaseStorage.child(currentBenutzer.getUsername()).getBytes(1024 * 1024).addOnSuccessListener(new OnSuccessListener<byte[]>()
@@ -113,7 +124,8 @@ public class profileFragment extends Fragment
                     @Override
                     public void onClick(DialogInterface dialog, int which)
                     {
-                        firebaseDatabase.child(currentBenutzer.getUsername()).removeValue();
+                        benutzerDataBase.child(currentBenutzer.getUsername()).removeValue();
+                        firebaseStorage.child(currentBenutzer.getUsername()).delete();
 
                         Intent delete = new Intent(activityView.getContext(), MainActivity.class);
                         startActivity(delete);
@@ -127,36 +139,58 @@ public class profileFragment extends Fragment
         return activityView;
     }
 
-    private void preferenceChanged(SharedPreferences sharedPrefs, String key)
+    public void friendButtonClick()
     {
+        androidx.appcompat.app.AlertDialog.Builder alert = new androidx.appcompat.app.AlertDialog.Builder(getContext());
+        alert.setTitle("Enter a name");
 
-        if(key.equals("notifications"))
-        {
-            boolean showNotifications = sharedPrefs.getBoolean("notifications", true);
-            if(showNotifications)
+        final EditText et_friendName = new EditText(getContext());
+        alert.setView(et_friendName);
+
+        alert.setPositiveButton("Send", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which)
             {
-                //Intent service = new Intent(getContext(), NotificationService.class);
-                //getActivity().startService(service);
+                String friendName = et_friendName.getText().toString();
+                Benutzer searchedBenutzer = allBenutzer.stream()
+                        .filter((b) -> b.getUsername().equals(friendName))
+                        .findFirst()
+                        .orElse(null);
+
+                if(searchedBenutzer != null)
+                {
+                    if(searchedBenutzer.getFriends()
+                            .getFriendList()
+                            .stream()
+                            .anyMatch((name) -> name.equals(currentBenutzer.getUsername())))
+                    {
+                        Snackbar snack = Snackbar.make(FragmentsActivity.fragmentActivityView.findViewById(android.R.id.content), "You have already sent a Friend-Request to "+searchedBenutzer.getUsername(), Snackbar.LENGTH_SHORT);
+
+                        View snackView = snack.getView();
+                        snackView.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorPrimary));
+                        snack.show();
+                    }
+                    else
+                    {
+                        Gson gson = new Gson();
+                        searchedBenutzer.getFriends().addFriendRequest(currentBenutzer.getUsername());
+                        benutzerDataBase.child(searchedBenutzer.getUsername()).setValue(gson.toJson(searchedBenutzer));
+                    }
+                }
+                else
+                {
+                    Snackbar snack = Snackbar.make(FragmentsActivity.fragmentActivityView.findViewById(android.R.id.content), "No User was found", Snackbar.LENGTH_SHORT);
+
+                    View snackView = snack.getView();
+                    snackView.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorPrimary));
+                    snack.show();
+                }
             }
-            else
-            {
-                //Intent service = new Intent(getContext(), NotificationService.class);
-                //getActivity().stopService(service);
-            }
-        }
-        else if(key.equals("private"))
-        {
-            boolean privateSetting = sharedPrefs.getBoolean("private", false);
-            if(privateSetting)
-            {
-                currentBenutzer.setPrivateSettings(true);
-            }
-            else
-            {
-                currentBenutzer.setPrivateSettings(false);
-            }
-            firebaseDatabase.child(currentBenutzer.getUsername()).setValue(currentBenutzer);
-        }
+        });
+
+        alert.setNegativeButton("Cancel", null);
+
+        alert.show();
     }
 
 }

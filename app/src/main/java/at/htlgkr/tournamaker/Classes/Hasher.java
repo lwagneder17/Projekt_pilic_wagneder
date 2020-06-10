@@ -1,4 +1,4 @@
-package at.htlgkr.tournamaker;
+package at.htlgkr.tournamaker.Classes;
 
 import android.content.Context;
 import android.graphics.Bitmap;

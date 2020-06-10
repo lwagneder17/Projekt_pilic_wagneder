@@ -1,14 +1,96 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/background"
     tools:context=".ui.create.createFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="Create Fragment" />
+    <EditText
+        android:id="@+id/tv_tournamentName"
+        android:layout_width="300dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="105dp"
+        android:layout_marginTop="75dp"
+        android:layout_marginEnd="105dp"
+        android:background="@drawable/text_style"
+        android:gravity="center"
+        android:hint="Tournament-Name"
 
-</FrameLayout>
+        android:textColor="#FFFFFF"
+        android:textColorHint="@color/colorPrimaryLight"
+        android:textSize="20dp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Spinner
+        android:id="@+id/anzahlSpinner"
+        android:layout_width="300dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="105dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginEnd="105dp"
+        android:background="@drawable/text_style"
+        android:popupBackground="@color/colorPrimary"
+
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_tournamentName" />
+
+    <Spinner
+        android:id="@+id/gameSpinner"
+        android:layout_width="300dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="105dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginEnd="105dp"
+        android:background="@drawable/text_style"
+        android:popupBackground="@color/colorPrimary"
+
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/anzahlSpinner" />
+
+    <EditText
+        android:id="@+id/tv_tournamentPassword"
+        android:layout_width="300dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="105dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginEnd="105dp"
+        android:background="@drawable/text_style"
+        android:gravity="center"
+        android:hint="Password"
+        android:inputType="textPassword"
+
+        android:textColor="#FFFFFF"
+        android:textColorHint="@color/colorPrimaryLight"
+        android:textSize="20dp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/gameSpinner" />
+
+    <Button
+        android:id="@+id/create_button"
+        android:layout_width="200dp"
+        android:layout_height="80dp"
+        android:layout_marginStart="105dp"
+        android:layout_marginTop="46dp"
+        android:layout_marginEnd="105dp"
+        android:background="@drawable/button_style"
+        android:text="Create"
+        android:textColor="#FFFFFF"
+        android:textSize="20dp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_tournamentPassword" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+
+

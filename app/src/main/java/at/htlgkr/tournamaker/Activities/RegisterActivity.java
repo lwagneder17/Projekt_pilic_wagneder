@@ -25,6 +25,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.google.gson.Gson;
 
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
@@ -33,8 +34,8 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 
-import at.htlgkr.tournamaker.Benutzer;
-import at.htlgkr.tournamaker.Hasher;
+import at.htlgkr.tournamaker.Classes.Benutzer;
+import at.htlgkr.tournamaker.Classes.Hasher;
 import at.htlgkr.tournamaker.R;
 
 public class RegisterActivity extends AppCompatActivity
@@ -62,9 +63,12 @@ public class RegisterActivity extends AppCompatActivity
             public void onDataChange(@NonNull DataSnapshot dataSnapshot)
             {
                 allBenutzer.clear();
+                Gson gson = new Gson();
                 for(DataSnapshot ds : dataSnapshot.getChildren())
                 {
-                    allBenutzer.add(ds.getValue(Benutzer.class));
+                    String s = (String) ds.getValue();
+                    allBenutzer.add(gson.fromJson(s, Benutzer.class));
+
                 }
             }
 
@@ -103,13 +107,14 @@ public class RegisterActivity extends AppCompatActivity
             String password = ((TextView) findViewById(R.id.tv_password)).getText().toString();
             if(!username.isEmpty() || !password.isEmpty())
             {
+                Gson gson = new Gson();
                 String securedPassword = Hasher.normalToHashedPassword(digest.digest(password.getBytes(StandardCharsets.UTF_8)));
                 Benutzer newBenutzer = new Benutzer(username, securedPassword);
 
 
                 if(allBenutzer.stream().map(Benutzer::getUsername).filter((u) -> u.equals(newBenutzer.getUsername())).count() <= 0)
                 {
-                    firebaseDatabase.child(newBenutzer.getUsername()).setValue(newBenutzer);
+                    firebaseDatabase.child(newBenutzer.getUsername()).setValue(gson.toJson(newBenutzer));
                     firebaseStorage.child(newBenutzer.getUsername()).putFile(Hasher.getImageUri(RegisterActivity.this, cameraPicture));
                     allBenutzer.add(newBenutzer);
 

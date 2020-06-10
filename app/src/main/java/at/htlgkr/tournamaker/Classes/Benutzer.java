@@ -1,12 +1,16 @@
-package at.htlgkr.tournamaker;
+package at.htlgkr.tournamaker.Classes;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Benutzer implements Serializable
 {
     private String username;
     private String hashedPassword;
     private boolean privateSettings = false;
+    private Statistic statistics;
+    private Friends friends;
 
     public Benutzer() {
     }
@@ -15,6 +19,8 @@ public class Benutzer implements Serializable
     {
         this.username = username;
         this.hashedPassword = hashedPassword;
+        statistics = new Statistic(0,0,0);
+        friends = new Friends();
     }
 
     public String getUsername() {
@@ -26,11 +32,19 @@ public class Benutzer implements Serializable
     }
 
 
-    public boolean isPrivateSettings() {
+    public boolean getPrivateSettings() {
         return privateSettings;
     }
 
     public void setPrivateSettings(boolean privateSettings) {
         this.privateSettings = privateSettings;
+    }
+
+    public Statistic getStatistics() {
+        return statistics;
+    }
+
+    public Friends getFriends() {
+        return friends;
     }
 }
