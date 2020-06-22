@@ -58,6 +58,24 @@
         app:layout_constraintTop_toBottomOf="@+id/tv_welcome" />
 
     <Button
+        android:id="@+id/removeFriend_button"
+        android:layout_width="300dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="105dp"
+        android:layout_marginTop="50dp"
+        android:layout_marginEnd="105dp"
+        android:background="@drawable/text_style"
+        android:gravity="center"
+        android:text="Add a Friend"
+        android:textColor="#FFFFFF"
+        android:textSize="20dp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.505"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_welcome" />
+
+    <Button
         android:id="@+id/settings_button"
         android:layout_width="300dp"
         android:layout_height="50dp"

@@ -72,12 +72,20 @@ public class searchFragment extends Fragment
             @Override
             public void onClick(View v) {
                 String tv_search = ((TextView) activityView.findViewById(R.id.tv_search)).getText().toString();
-                List<Tournament> filtered = allTournaments
-                        .stream()
-                        .filter((t) -> t.getName().equals(tv_search))
-                        .collect(Collectors.toList());
+                List<Tournament> filtered;
+                if(tv_search.isEmpty() || tv_search.equals(" "))
+                {
+                    filtered = allTournaments;
+                }
+                else
+                {
+                    filtered = allTournaments
+                            .stream()
+                            .filter((t) -> t.getName().equals(tv_search))
+                            .collect(Collectors.toList());
+                }
 
-                tournamentAdapter = new TournamentAdapter(getContext(), R.layout.listviewitem_layout, filtered);
+                tournamentAdapter = new TournamentAdapter(getContext(), R.layout.tournamentitem_layout, filtered);
 
                 tournamentListView.setAdapter(tournamentAdapter);
                 tournamentAdapter.notifyDataSetChanged();
@@ -90,7 +98,7 @@ public class searchFragment extends Fragment
     }
 
     private void bindAdapterToListView(ListView lv) {
-        tournamentAdapter = new TournamentAdapter(getContext(), R.layout.listviewitem_layout, allTournaments);
+        tournamentAdapter = new TournamentAdapter(getContext(), R.layout.tournamentitem_layout, allTournaments);
 
         lv.setAdapter(tournamentAdapter);
         tournamentAdapter.notifyDataSetChanged();

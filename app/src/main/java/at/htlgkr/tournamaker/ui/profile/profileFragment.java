@@ -28,6 +28,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.storage.StorageReference;
 import com.google.gson.Gson;
 
+import java.io.FileNotFoundException;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -42,6 +45,8 @@ import at.htlgkr.tournamaker.Preferences.MySettingsActivity;
 import at.htlgkr.tournamaker.Preferences.NotificationService;
 import at.htlgkr.tournamaker.R;
 
+import static android.content.Context.MODE_PRIVATE;
+
 /**
  * A simple {@link Fragment} subclass.
  */
@@ -52,6 +57,7 @@ public class profileFragment extends Fragment
     private static StorageReference firebaseStorage = FragmentsActivity.firebaseStorage;
     private static DatabaseReference benutzerDataBase = FragmentsActivity.benutzerDataBase;
     private View activityView;
+    private final static String FILENAME_JSON = "currentBenutzerJson.json";
 
     public profileFragment()
     {
@@ -106,7 +112,21 @@ public class profileFragment extends Fragment
         Button signOut = activityView.findViewById(R.id.signoff_button);
         signOut.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v)
+            {
+                try
+                {
+                    PrintWriter pw = new PrintWriter(new OutputStreamWriter(getActivity().openFileOutput(FILENAME_JSON, MODE_PRIVATE)));
+                    pw.write("");
+                    pw.flush();
+                    pw.close();
+                }
+                catch (FileNotFoundException e)
+                {
+                    e.printStackTrace();
+                }
+
+
                 Intent logout = new Intent(activityView.getContext(), MainActivity.class);
                 startActivity(logout);
             }
