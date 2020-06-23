@@ -60,13 +60,13 @@ public class TournamentActivity extends AppCompatActivity
         Spinner finalSpinner = findViewById(R.id.finalSpinner);
         ListView matchListView = findViewById(R.id.matchListView);
 
+
         Intent i = getIntent();
         if(i.getExtras() != null)
         {
             Bundle extra = i.getBundleExtra("extra");
             selectedTournament = (Tournament) extra.getSerializable("selectedTournament");
         }
-
 
         Button join = findViewById(R.id.join_button);
         join.setOnClickListener(new View.OnClickListener() {
@@ -76,6 +76,14 @@ public class TournamentActivity extends AppCompatActivity
             }
 
         });
+
+
+        if(selectedTournament.getTeilnehmer().size() == selectedTournament.getMaxTeilnehmer() ||
+                selectedTournament.getCreator().getUsername().equals(currentBenutzer.getUsername()))
+        {
+            join.setTextColor(Color.parseColor("#50FFFFFF"));
+            join.getBackground().setAlpha(128);
+        }
 
         matchListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
@@ -117,15 +125,45 @@ public class TournamentActivity extends AppCompatActivity
                                     break;
 
                                 case "Quarter":
-                                    selectedTournament.getQuarterFinals().remove(selectedMatch);
+                                    if(!selectedTournament.getRoundOf16().isEmpty())
+                                    {
+                                        Snackbar snack = Snackbar.make(findViewById(android.R.id.content), "There are matches to be done in the RoundOf16" , Snackbar.LENGTH_SHORT);
+                                        View snackView = snack.getView();
+                                        snackView.setBackgroundColor(ContextCompat.getColor(TournamentActivity.this, R.color.colorPrimary));
+                                        snack.show();
+                                    }
+                                    else
+                                    {
+                                        selectedTournament.getQuarterFinals().remove(selectedMatch);
+                                    }
                                     break;
 
                                 case "Semi":
-                                    selectedTournament.getSemiFinals().remove(selectedMatch);
+                                    if(!selectedTournament.getQuarterFinals().isEmpty())
+                                    {
+                                        Snackbar snack = Snackbar.make(findViewById(android.R.id.content), "There are matches to be done in the Quarter-Finals" , Snackbar.LENGTH_SHORT);
+                                        View snackView = snack.getView();
+                                        snackView.setBackgroundColor(ContextCompat.getColor(TournamentActivity.this, R.color.colorPrimary));
+                                        snack.show();
+                                    }
+                                    else
+                                    {
+                                        selectedTournament.getSemiFinals().remove(selectedMatch);
+                                    }
                                     break;
 
                                 case "Final":
-                                    selectedTournament.getFinals().remove(selectedMatch);
+                                    if(!selectedTournament.getSemiFinals().isEmpty())
+                                    {
+                                        Snackbar snack = Snackbar.make(findViewById(android.R.id.content), "There are matches to be done in the Semi-Finals" , Snackbar.LENGTH_SHORT);
+                                        View snackView = snack.getView();
+                                        snackView.setBackgroundColor(ContextCompat.getColor(TournamentActivity.this, R.color.colorPrimary));
+                                        snack.show();
+                                    }
+                                    else
+                                    {
+                                        selectedTournament.getFinals().remove(selectedMatch);
+                                    }
                                     break;
                             }
 
@@ -247,6 +285,13 @@ public class TournamentActivity extends AppCompatActivity
                 snack.show();
             }
         }
+        else if(selectedTournament.getTeilnehmer().size() == selectedTournament.getMaxTeilnehmer())
+        {
+            Snackbar snack = Snackbar.make(findViewById(android.R.id.content), "You cannot Join. The tournament already reached its full capacity", Snackbar.LENGTH_SHORT);
+            View snackView = snack.getView();
+            snackView.setBackgroundColor(ContextCompat.getColor(TournamentActivity.this, R.color.colorPrimary));
+            snack.show();
+        }
         else
         {
             if(!selectedTournament.getCreator().getUsername().equals(currentBenutzer.getUsername()))
@@ -302,6 +347,7 @@ public class TournamentActivity extends AppCompatActivity
                 snack.show();
             }
         }
+
     }
 
 

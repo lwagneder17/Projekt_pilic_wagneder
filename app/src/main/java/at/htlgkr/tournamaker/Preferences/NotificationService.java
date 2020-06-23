@@ -49,7 +49,7 @@ public class NotificationService extends IntentService
                     .setSmallIcon(android.R.drawable.btn_star_big_on)
                     .setColor(Color.GREEN)
                     .setContentTitle(getString(R.string.app_name))
-                    .setContentText("Sie haben mtehrere Freundschafsanfragen bekommen")
+                    .setContentText("Sie haben mehrere Freundschafsanfragen bekommen")
                     .setWhen(System.currentTimeMillis())
                     .setPriority(NotificationCompat.PRIORITY_DEFAULT);
 
@@ -97,7 +97,7 @@ public class NotificationService extends IntentService
 
             NotificationCompat.Builder builder  = new NotificationCompat.Builder(this, "10")
                     .setSmallIcon(android.R.drawable.btn_star_big_on)
-                    .setColor(Color.RED)
+                    .setColor(Color.YELLOW)
                     .setContentTitle(getString(R.string.app_name))
                     .setContentText("Mehrere Freunschaftsanfragen wurden abgelehnt")
                     .setWhen(System.currentTimeMillis())
@@ -125,7 +125,7 @@ public class NotificationService extends IntentService
 
             NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "1")
                     .setSmallIcon(android.R.drawable.btn_star_big_on)
-                    .setColor(Color.RED)
+                    .setColor(Color.YELLOW)
                     .setContentTitle(getString(R.string.app_name))
                     .setContentText(username+" hat ihre Freundschaftsanfrage abgelehnt")
                     .setWhen(System.currentTimeMillis())
@@ -138,6 +138,68 @@ public class NotificationService extends IntentService
             currentBenutzer.getFriends().getFriendDenied().clear();
             benutzerDataBase.child(currentBenutzer.getUsername()).setValue(gson.toJson(currentBenutzer));
         }
+
+
+
+
+
+
+
+        if(currentBenutzer.getFriends().getFriendRemoved().size() > 1)
+        {
+            CharSequence name = "name";
+            String description = "bruh";
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel("10", name, importance);
+            channel.setDescription(description);
+
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "10")
+                    .setSmallIcon(android.R.drawable.btn_star_big_on)
+                    .setColor(Color.RED)
+                    .setContentTitle(getString(R.string.app_name))
+                    .setContentText("Mehrere Personen haben Sie aus ihrer Freundesliste entfernt")
+                    .setWhen(System.currentTimeMillis())
+                    .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+
+
+            NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(this);
+            notificationManagerCompat.notify(10, builder.build());
+
+            currentBenutzer.getFriends().getFriendRemoved().clear();
+            benutzerDataBase.child(currentBenutzer.getUsername()).setValue(gson.toJson(currentBenutzer));
+        }
+        else if(currentBenutzer.getFriends().getFriendRemoved().size() == 1)
+        {
+            String username = currentBenutzer.getFriends().getFriendRemoved().get(0);
+
+            CharSequence name = "name";
+            String description = "bruh";
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel("1", name, importance);
+            channel.setDescription(description);
+
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "1")
+                    .setSmallIcon(android.R.drawable.btn_star_big_on)
+                    .setColor(Color.RED)
+                    .setContentTitle(getString(R.string.app_name))
+                    .setContentText(username+" hat Sie aus ihrer Freundesliste entfernt")
+                    .setWhen(System.currentTimeMillis())
+                    .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+
+
+            NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(this);
+            notificationManagerCompat.notify(1, builder.build());
+
+            currentBenutzer.getFriends().getFriendRemoved().clear();
+            benutzerDataBase.child(currentBenutzer.getUsername()).setValue(gson.toJson(currentBenutzer));
+        }
+
     }
 
     @Override

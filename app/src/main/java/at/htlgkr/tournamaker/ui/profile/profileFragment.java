@@ -70,7 +70,7 @@ public class profileFragment extends Fragment
     {
         activityView = inflater.inflate(R.layout.fragment_profile, container, false);
 
-        Button friend = activityView.findViewById(R.id.friend_button);
+        Button friend = activityView.findViewById(R.id.friendSettings_button);
         friend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v)
@@ -159,9 +159,99 @@ public class profileFragment extends Fragment
         return activityView;
     }
 
-    public void friendButtonClick()
+    private void friendButtonClick()
     {
-        androidx.appcompat.app.AlertDialog.Builder alert = new androidx.appcompat.app.AlertDialog.Builder(getContext());
+        AlertDialog.Builder bruh = new AlertDialog.Builder(getContext());
+        bruh.setTitle("What do you wanna do?");
+
+        String[] array = new String[]{"Remove a Friend", "Add Someone"};
+        bruh.setSingleChoiceItems(array, 0, null);
+
+        bruh.setPositiveButton("Continue", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which)
+            {
+                int selectedPosition = ((AlertDialog) dialog).getListView().getCheckedItemPosition();
+                if(selectedPosition == 0)
+                {
+                    removeFriend();
+                }
+                else
+                {
+                    addFriend();
+                }
+
+            }
+        });
+
+        bruh.setNegativeButton("Cancel", null);
+
+        bruh.show();
+    }
+
+    private void removeFriend()
+    {
+        AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
+        alert.setTitle("Enter a name");
+
+        final EditText et_friendName = new EditText(getContext());
+        alert.setView(et_friendName);
+
+        alert.setPositiveButton("Remove", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which)
+            {
+                String friendName = et_friendName.getText().toString();
+                Benutzer searchedBenutzer = allBenutzer.stream()
+                        .filter((b) -> b.getUsername().equals(friendName))
+                        .findFirst()
+                        .orElse(null);
+
+                if(searchedBenutzer != null)
+                {
+                    if(currentBenutzer.getFriends()
+                            .getFriendList()
+                            .stream()
+                            .noneMatch((name) -> name.equals(searchedBenutzer.getUsername())))
+                    {
+                        Snackbar snack = Snackbar.make(FragmentsActivity.fragmentActivityView.findViewById(android.R.id.content), "You have already removed "+searchedBenutzer.getUsername()+" from your Friends-list", Snackbar.LENGTH_SHORT);
+
+                        View snackView = snack.getView();
+                        snackView.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorPrimary));
+                        snack.show();
+                    }
+                    else
+                    {
+                        Gson gson = new Gson();
+                        searchedBenutzer.getFriends().getFriendList().remove(currentBenutzer.getUsername());
+                        currentBenutzer.getFriends().getFriendList().remove(searchedBenutzer.getUsername());
+
+                        searchedBenutzer.getFriends().addFriendRemoved(currentBenutzer.getUsername());
+
+                        benutzerDataBase.child(searchedBenutzer.getUsername()).setValue(gson.toJson(searchedBenutzer));
+                        benutzerDataBase.child(currentBenutzer.getUsername()).setValue(gson.toJson(currentBenutzer));
+
+                    }
+                }
+                else
+                {
+                    Snackbar snack = Snackbar.make(FragmentsActivity.fragmentActivityView.findViewById(android.R.id.content), "No User was found", Snackbar.LENGTH_SHORT);
+
+                    View snackView = snack.getView();
+                    snackView.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorPrimary));
+                    snack.show();
+                }
+            }
+        });
+
+        alert.setNegativeButton("Cancel", null);
+
+        alert.show();
+    }
+
+    private void addFriend()
+    {
+        AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
         alert.setTitle("Enter a name");
 
         final EditText et_friendName = new EditText(getContext());
@@ -180,7 +270,7 @@ public class profileFragment extends Fragment
                 if(searchedBenutzer != null)
                 {
                     if(searchedBenutzer.getFriends()
-                            .getFriendList()
+                            .getFriendRequests()
                             .stream()
                             .anyMatch((name) -> name.equals(currentBenutzer.getUsername())))
                     {

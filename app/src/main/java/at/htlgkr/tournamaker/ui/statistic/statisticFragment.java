@@ -17,8 +17,6 @@ import java.util.stream.Collectors;
 import at.htlgkr.tournamaker.Activities.FragmentsActivity;
 import at.htlgkr.tournamaker.Classes.Benutzer;
 import at.htlgkr.tournamaker.Classes.FriendsAdapter;
-import at.htlgkr.tournamaker.Classes.Tournament;
-import at.htlgkr.tournamaker.Classes.TournamentAdapter;
 import at.htlgkr.tournamaker.R;
 
 /**

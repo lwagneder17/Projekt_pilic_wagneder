@@ -9,12 +9,28 @@ public class Friends implements Serializable
     private List<String> friendList;
     private List<String> friendRequests;
     private List<String> friendDenied;
+    private List<String> friendRemoved;
 
     public Friends()
     {
         friendList = new ArrayList<>();
         friendRequests = new ArrayList<>();
         friendDenied = new ArrayList<>();
+        friendRemoved = new ArrayList<>();
+    }
+
+    public List<String> getFriendRemoved() {
+        return friendRemoved;
+    }
+
+    public void addFriendRemoved(String name)
+    {
+        friendRemoved.add(name);
+    }
+
+    public void removeFriendRemoved(String name)
+    {
+        friendRemoved.remove(name);
     }
 
     public void addFriendDenied(String name)
