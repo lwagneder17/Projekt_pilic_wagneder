@@ -5,25 +5,20 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
 
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.storage.StorageReference;
-
 import java.util.List;
 import java.util.stream.Collectors;
 
 import at.htlgkr.tournamaker.Activities.FragmentsActivity;
 import at.htlgkr.tournamaker.Activities.TournamentActivity;
-import at.htlgkr.tournamaker.Classes.Benutzer;
-import at.htlgkr.tournamaker.R;
 import at.htlgkr.tournamaker.Classes.Tournament;
 import at.htlgkr.tournamaker.Classes.TournamentAdapter;
+import at.htlgkr.tournamaker.R;
 
 
 /**
@@ -31,11 +26,7 @@ import at.htlgkr.tournamaker.Classes.TournamentAdapter;
  */
 public class searchFragment extends Fragment
 {
-    private List<Benutzer> allBenutzer = FragmentsActivity.allBenutzer;
-    private Benutzer currentBenutzer = FragmentsActivity.currentBenutzer;
     private static List<Tournament> allTournaments = FragmentsActivity.allTournaments;
-    private static StorageReference firebaseStorage = FragmentsActivity.firebaseStorage;
-    private static DatabaseReference tournamentsDataBase = FragmentsActivity.tournamentsDataBase;
     private View activityView;
     private TournamentAdapter tournamentAdapter;
 
@@ -51,45 +42,38 @@ public class searchFragment extends Fragment
         ListView tournamentListView = activityView.findViewById(R.id.tournamentsListView);
         bindAdapterToListView(tournamentListView);
 
-        tournamentListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id)
-            {
-                Tournament selectedTournament = tournamentAdapter.getItem(position);
+        tournamentListView.setOnItemClickListener((parent, view, position, id) -> {
+            Tournament selectedTournament = tournamentAdapter.getItem(position);
 
-                Intent i = new Intent(getContext(), TournamentActivity.class);
-                Bundle extras = new Bundle();
-                extras.putSerializable("selectedTournament", selectedTournament);
-                i.putExtra("extra", extras);
+            Intent i = new Intent(getContext(), TournamentActivity.class);
+            Bundle extras = new Bundle();
+            extras.putSerializable("selectedTournament", selectedTournament);
+            i.putExtra("extra", extras);
 
-                startActivity(i);
-            }
+            startActivity(i);
         });
 
 
         ImageView search = activityView.findViewById(R.id.searchButton);
-        search.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String tv_search = ((TextView) activityView.findViewById(R.id.tv_search)).getText().toString();
-                List<Tournament> filtered;
-                if(tv_search.isEmpty() || tv_search.equals(" "))
-                {
-                    filtered = allTournaments;
-                }
-                else
-                {
-                    filtered = allTournaments
-                            .stream()
-                            .filter((t) -> t.getName().equals(tv_search))
-                            .collect(Collectors.toList());
-                }
-
-                tournamentAdapter = new TournamentAdapter(getContext(), R.layout.tournamentitem_layout, filtered);
-
-                tournamentListView.setAdapter(tournamentAdapter);
-                tournamentAdapter.notifyDataSetChanged();
+        search.setOnClickListener(v -> {
+            String tv_search = ((TextView) activityView.findViewById(R.id.tv_search)).getText().toString();
+            List<Tournament> filtered;
+            if(tv_search.isEmpty() || tv_search.equals(" "))
+            {
+                filtered = allTournaments;
             }
+            else
+            {
+                filtered = allTournaments
+                        .stream()
+                        .filter((t) -> t.getName().equals(tv_search))
+                        .collect(Collectors.toList());
+            }
+
+            tournamentAdapter = new TournamentAdapter(getContext(), R.layout.tournamentitem_layout, filtered);
+
+            tournamentListView.setAdapter(tournamentAdapter);
+            tournamentAdapter.notifyDataSetChanged();
         });
 
 

@@ -28,9 +28,6 @@ import com.google.firebase.storage.StorageReference;
 import com.google.gson.Gson;
 
 import java.io.Serializable;
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -99,53 +96,44 @@ public class RegisterActivity extends AppCompatActivity
 
     public void onClickRegister()
     {
-        try
+        String username = ((TextView) findViewById(R.id.tv_username)).getText().toString();
+        String password = ((TextView) findViewById(R.id.tv_password)).getText().toString();
+        if(!username.isEmpty() || !password.isEmpty())
         {
-            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            Gson gson = new Gson();
+            String securedPassword = Hasher.normalToHashedPassword(password);
+            Benutzer newBenutzer = new Benutzer(username, securedPassword);
 
-            String username = ((TextView) findViewById(R.id.tv_username)).getText().toString();
-            String password = ((TextView) findViewById(R.id.tv_password)).getText().toString();
-            if(!username.isEmpty() || !password.isEmpty())
+
+            if(allBenutzer.stream().map(Benutzer::getUsername).filter((u) -> u.equals(newBenutzer.getUsername())).count() <= 0)
             {
-                Gson gson = new Gson();
-                String securedPassword = Hasher.normalToHashedPassword(digest.digest(password.getBytes(StandardCharsets.UTF_8)));
-                Benutzer newBenutzer = new Benutzer(username, securedPassword);
+                firebaseDatabase.child(newBenutzer.getUsername()).setValue(gson.toJson(newBenutzer));
+                firebaseStorage.child(newBenutzer.getUsername()).putFile(Hasher.getImageUri(RegisterActivity.this, cameraPicture));
+                allBenutzer.add(newBenutzer);
 
-
-                if(allBenutzer.stream().map(Benutzer::getUsername).filter((u) -> u.equals(newBenutzer.getUsername())).count() <= 0)
-                {
-                    firebaseDatabase.child(newBenutzer.getUsername()).setValue(gson.toJson(newBenutzer));
-                    firebaseStorage.child(newBenutzer.getUsername()).putFile(Hasher.getImageUri(RegisterActivity.this, cameraPicture));
-                    allBenutzer.add(newBenutzer);
-
-                    Intent i = new Intent(RegisterActivity.this, MainActivity.class);
-                    Bundle extra = new Bundle();
-                    extra.putSerializable("benutzer", (Serializable) allBenutzer);
-                    i.putExtra("bundle", extra);
-                    startActivity(i);
-                }
-                else
-                {
-                    Snackbar snack = Snackbar.make(findViewById(android.R.id.content), "Username is already taken", Snackbar.LENGTH_SHORT);
-
-                    View snackView = snack.getView();
-                    snackView.setBackgroundColor(ContextCompat.getColor(RegisterActivity.this, R.color.colorPrimary));
-                    snack.show();
-                }
+                Intent i = new Intent(RegisterActivity.this, MainActivity.class);
+                Bundle extra = new Bundle();
+                extra.putSerializable("benutzer", (Serializable) allBenutzer);
+                i.putExtra("bundle", extra);
+                startActivity(i);
             }
             else
             {
-                Snackbar snack = Snackbar.make(findViewById(android.R.id.content), "Fields are empty", Snackbar.LENGTH_SHORT);
+                Snackbar snack = Snackbar.make(findViewById(android.R.id.content), "Username is already taken", Snackbar.LENGTH_SHORT);
 
                 View snackView = snack.getView();
                 snackView.setBackgroundColor(ContextCompat.getColor(RegisterActivity.this, R.color.colorPrimary));
                 snack.show();
-
             }
         }
-        catch (NoSuchAlgorithmException e)
+        else
         {
-            e.printStackTrace();
+            Snackbar snack = Snackbar.make(findViewById(android.R.id.content), "Fields are empty", Snackbar.LENGTH_SHORT);
+
+            View snackView = snack.getView();
+            snackView.setBackgroundColor(ContextCompat.getColor(RegisterActivity.this, R.color.colorPrimary));
+            snack.show();
+
         }
     }
 

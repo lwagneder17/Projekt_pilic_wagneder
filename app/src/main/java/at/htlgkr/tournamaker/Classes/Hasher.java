@@ -6,11 +6,31 @@ import android.net.Uri;
 import android.provider.MediaStore;
 
 import java.io.ByteArrayOutputStream;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 public class Hasher
 {
-    public static String normalToHashedPassword(byte[] hash)
+    private static MessageDigest digest;
+
+    public Hasher()
     {
+        try
+        {
+             digest = MessageDigest.getInstance("SHA-256");
+        }
+        catch (NoSuchAlgorithmException e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+
+    public static String normalToHashedPassword(String password)
+    {
+        byte[] hash = digest.digest(password.getBytes(StandardCharsets.UTF_8));
+
         StringBuffer hexString = new StringBuffer();
         for (int i = 0; i < hash.length; i++) {
             String hex = Integer.toHexString(0xff & hash[i]);

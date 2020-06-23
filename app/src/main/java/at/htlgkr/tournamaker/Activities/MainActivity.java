@@ -19,7 +19,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -30,9 +29,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.Serializable;
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -125,8 +121,7 @@ public class MainActivity extends AppCompatActivity
         {
             try
             {
-                MessageDigest digest = MessageDigest.getInstance("SHA-256");
-                String securedPassword = Hasher.normalToHashedPassword(digest.digest(password.getBytes(StandardCharsets.UTF_8)));
+                String securedPassword = Hasher.normalToHashedPassword(password);
 
                 if(allBenutzer.stream()
                     .filter((b) -> b.getUsername().equals(username) && b.getHashedPassword().equals(securedPassword))
@@ -150,7 +145,7 @@ public class MainActivity extends AppCompatActivity
                 }
                 else
                 {
-                    Snackbar snack = Snackbar.make(findViewById(android.R.id.content), "Username or Password is wrong ", Snackbar.LENGTH_SHORT);
+                    Snackbar snack = Snackbar.make(findViewById(android.R.id.content), "Username or Password is wrong", Snackbar.LENGTH_SHORT);
 
                     View snackView = snack.getView();
                     snackView.setBackgroundColor(ContextCompat.getColor(MainActivity.this, R.color.colorPrimary));
@@ -158,7 +153,7 @@ public class MainActivity extends AppCompatActivity
                 }
 
             }
-            catch (NoSuchAlgorithmException | FileNotFoundException e)
+            catch (FileNotFoundException e)
             {
                 e.printStackTrace();
             }

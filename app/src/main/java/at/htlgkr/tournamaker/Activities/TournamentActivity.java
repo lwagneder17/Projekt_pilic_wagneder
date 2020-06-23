@@ -1,13 +1,8 @@
 package at.htlgkr.tournamaker.Activities;
 
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
-
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.Paint;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -16,29 +11,23 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
-import android.widget.TextView;
-import android.widget.Toast;
+
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.storage.StorageReference;
 import com.google.gson.Gson;
 
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
 
 import at.htlgkr.tournamaker.Classes.Benutzer;
 import at.htlgkr.tournamaker.Classes.Hasher;
 import at.htlgkr.tournamaker.Classes.Match;
 import at.htlgkr.tournamaker.Classes.MatchAdapter;
-import at.htlgkr.tournamaker.R;
 import at.htlgkr.tournamaker.Classes.Tournament;
+import at.htlgkr.tournamaker.R;
 
 public class TournamentActivity extends AppCompatActivity
 {
@@ -46,11 +35,12 @@ public class TournamentActivity extends AppCompatActivity
     private Benutzer currentBenutzer = FragmentsActivity.currentBenutzer;
     private MatchAdapter matchAdapter;
     private ArrayAdapter<String> spinnerAdapter;
-    private static StorageReference firebaseStorage = FragmentsActivity.firebaseStorage;
     private static DatabaseReference tournamentsDataBase = FragmentsActivity.tournamentsDataBase;
     private static DatabaseReference benutzerDataBase = FragmentsActivity.benutzerDataBase;
 
     private final Gson gson = new Gson();
+    private Snackbar snack;
+    private View snackView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,13 +59,7 @@ public class TournamentActivity extends AppCompatActivity
         }
 
         Button join = findViewById(R.id.join_button);
-        join.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                joinTournament();
-            }
-
-        });
+        join.setOnClickListener(v -> joinTournament());
 
 
         if(selectedTournament.getTeilnehmer().size() == selectedTournament.getMaxTeilnehmer() ||
@@ -85,9 +69,14 @@ public class TournamentActivity extends AppCompatActivity
             join.getBackground().setAlpha(128);
         }
 
-        matchListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id)
+        matchListView.setOnItemLongClickListener((parent, view, position, id) -> {
+            if (selectedTournament.getTeilnehmer().size() != selectedTournament.getMaxTeilnehmer()) {
+                snack = Snackbar.make(findViewById(android.R.id.content), "The tournament is not full of players", Snackbar.LENGTH_SHORT);
+                snackView = snack.getView();
+                snackView.setBackgroundColor(ContextCompat.getColor(TournamentActivity.this, R.color.colorPrimary));
+                snack.show();
+            }
+            else
             {
                 Match selectedMatch = matchAdapter.getItem(position);
                 AlertDialog.Builder alert = new AlertDialog.Builder(TournamentActivity.this);
@@ -96,95 +85,77 @@ public class TournamentActivity extends AppCompatActivity
                 String[] array = new String[]{selectedMatch.getFirst().getUsername(), selectedMatch.getSecond().getUsername()};
                 alert.setSingleChoiceItems(array, 0, null);
 
-                alert.setPositiveButton("OK", new DialogInterface.OnClickListener()
-                {
-                    public void onClick(DialogInterface dialog, int whichButton)
-                    {
-                        if(currentBenutzer.getUsername().equals(selectedTournament.getCreator().getUsername()))
-                        {
-                            int selectedPosition = ((AlertDialog) dialog).getListView().getCheckedItemPosition();
-                            Benutzer winner;
-                            switch(selectedPosition)
-                            {
-                                case 0:
-                                    winner = selectedMatch.getFirst();
-                                    break;
+                alert.setPositiveButton("OK", (dialog, whichButton) -> {
+                    if (currentBenutzer.getUsername().equals(selectedTournament.getCreator().getUsername())) {
+                        int selectedPosition = ((AlertDialog) dialog).getListView().getCheckedItemPosition();
+                        Benutzer winner;
+                        switch (selectedPosition) {
+                            case 0:
+                                winner = selectedMatch.getFirst();
+                                break;
 
-                                case 1:
-                                    winner = selectedMatch.getSecond();
-                                    break;
+                            case 1:
+                                winner = selectedMatch.getSecond();
+                                break;
 
-                                default:
-                                    throw new IllegalStateException("Unexpected value: " + selectedPosition);
-                            }
-
-                            switch((String) finalSpinner.getSelectedItem())
-                            {
-                                case "Round of 16":
-                                    selectedTournament.getRoundOf16().remove(selectedMatch);
-                                    break;
-
-                                case "Quarter":
-                                    if(!selectedTournament.getRoundOf16().isEmpty())
-                                    {
-                                        Snackbar snack = Snackbar.make(findViewById(android.R.id.content), "There are matches to be done in the RoundOf16" , Snackbar.LENGTH_SHORT);
-                                        View snackView = snack.getView();
-                                        snackView.setBackgroundColor(ContextCompat.getColor(TournamentActivity.this, R.color.colorPrimary));
-                                        snack.show();
-                                    }
-                                    else
-                                    {
-                                        selectedTournament.getQuarterFinals().remove(selectedMatch);
-                                    }
-                                    break;
-
-                                case "Semi":
-                                    if(!selectedTournament.getQuarterFinals().isEmpty())
-                                    {
-                                        Snackbar snack = Snackbar.make(findViewById(android.R.id.content), "There are matches to be done in the Quarter-Finals" , Snackbar.LENGTH_SHORT);
-                                        View snackView = snack.getView();
-                                        snackView.setBackgroundColor(ContextCompat.getColor(TournamentActivity.this, R.color.colorPrimary));
-                                        snack.show();
-                                    }
-                                    else
-                                    {
-                                        selectedTournament.getSemiFinals().remove(selectedMatch);
-                                    }
-                                    break;
-
-                                case "Final":
-                                    if(!selectedTournament.getSemiFinals().isEmpty())
-                                    {
-                                        Snackbar snack = Snackbar.make(findViewById(android.R.id.content), "There are matches to be done in the Semi-Finals" , Snackbar.LENGTH_SHORT);
-                                        View snackView = snack.getView();
-                                        snackView.setBackgroundColor(ContextCompat.getColor(TournamentActivity.this, R.color.colorPrimary));
-                                        snack.show();
-                                    }
-                                    else
-                                    {
-                                        selectedTournament.getFinals().remove(selectedMatch);
-                                    }
-                                    break;
-                            }
-
-                            matchAdapter.notifyDataSetChanged();
-                            moveWinnerUp(finalSpinner, winner);
-                        }
-                        else
-                        {
-                            Snackbar snack = Snackbar.make(findViewById(android.R.id.content), "You are not the Creator of the tournament", Snackbar.LENGTH_SHORT);
-                            View snackView = snack.getView();
-                            snackView.setBackgroundColor(ContextCompat.getColor(TournamentActivity.this, R.color.colorPrimary));
-                            snack.show();
+                            default:
+                                throw new IllegalStateException("Unexpected value: " + selectedPosition);
                         }
 
+                        switch ((String) finalSpinner.getSelectedItem()) {
+                            case "Round of 16":
+                                selectedTournament.getRoundOf16().remove(selectedMatch);
+                                break;
+
+                            case "Quarter":
+                                if (!selectedTournament.getRoundOf16().isEmpty()) {
+                                    snack = Snackbar.make(findViewById(android.R.id.content), "There are matches to be done in the RoundOf16", Snackbar.LENGTH_SHORT);
+                                    snackView = snack.getView();
+                                    snackView.setBackgroundColor(ContextCompat.getColor(TournamentActivity.this, R.color.colorPrimary));
+                                    snack.show();
+                                } else {
+                                    selectedTournament.getQuarterFinals().remove(selectedMatch);
+                                }
+                                break;
+
+                            case "Semi":
+                                if (!selectedTournament.getQuarterFinals().isEmpty()) {
+                                    snack = Snackbar.make(findViewById(android.R.id.content), "There are matches to be done in the Quarter-Finals", Snackbar.LENGTH_SHORT);
+                                    snackView = snack.getView();
+                                    snackView.setBackgroundColor(ContextCompat.getColor(TournamentActivity.this, R.color.colorPrimary));
+                                    snack.show();
+                                } else {
+                                    selectedTournament.getSemiFinals().remove(selectedMatch);
+                                }
+                                break;
+
+                            case "Final":
+                                if (!selectedTournament.getSemiFinals().isEmpty()) {
+                                    snack = Snackbar.make(findViewById(android.R.id.content), "There are matches to be done in the Semi-Finals", Snackbar.LENGTH_SHORT);
+                                    snackView = snack.getView();
+                                    snackView.setBackgroundColor(ContextCompat.getColor(TournamentActivity.this, R.color.colorPrimary));
+                                    snack.show();
+                                } else {
+                                    selectedTournament.getFinals().remove(selectedMatch);
+                                }
+                                break;
+                        }
+
+                        matchAdapter.notifyDataSetChanged();
+                        moveWinnerUp(finalSpinner, winner);
+                    } else {
+                        snack = Snackbar.make(findViewById(android.R.id.content), "You are not the Creator of the tournament", Snackbar.LENGTH_SHORT);
+                        snackView = snack.getView();
+                        snackView.setBackgroundColor(ContextCompat.getColor(TournamentActivity.this, R.color.colorPrimary));
+                        snack.show();
                     }
+
                 });
 
-                alert.setNegativeButton("Cancel",null);
+                alert.setNegativeButton("Cancel", null);
                 alert.show();
-                return false;
             }
+            return false;
         });
 
         finalSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -243,31 +214,22 @@ public class TournamentActivity extends AppCompatActivity
                     @Override
                     public void onClick(DialogInterface dialog, int which)
                     {
-                        MessageDigest digest = null;
-                        try
-                        {
-                            digest = MessageDigest.getInstance("SHA-256");
-                        }
-                        catch (NoSuchAlgorithmException e)
-                        {
-                            e.printStackTrace();
-                        }
 
-                        String password = Hasher.normalToHashedPassword(digest.digest(et_password.getText().toString().getBytes(StandardCharsets.UTF_8)));
+                        String password = Hasher.normalToHashedPassword(et_password.getText().toString());
                         if(password.equals(selectedTournament.getPassword()))
                         {
                             selectedTournament.addBenutzerToTournament(currentBenutzer);
                             tournamentsDataBase.child(selectedTournament.getName()).setValue(gson.toJson(selectedTournament));
 
-                            Snackbar snack = Snackbar.make(findViewById(android.R.id.content), "You joined the tournament", Snackbar.LENGTH_SHORT);
-                            View snackView = snack.getView();
+                            snack = Snackbar.make(findViewById(android.R.id.content), "You joined the tournament", Snackbar.LENGTH_SHORT);
+                            snackView = snack.getView();
                             snackView.setBackgroundColor(ContextCompat.getColor(TournamentActivity.this, R.color.colorPrimary));
                             snack.show();
                         }
                         else
                         {
-                            Snackbar snack = Snackbar.make(findViewById(android.R.id.content), "Wrong Password", Snackbar.LENGTH_SHORT);
-                            View snackView = snack.getView();
+                            snack = Snackbar.make(findViewById(android.R.id.content), "Wrong Password", Snackbar.LENGTH_SHORT);
+                            snackView = snack.getView();
                             snackView.setBackgroundColor(ContextCompat.getColor(TournamentActivity.this, R.color.colorPrimary));
                             snack.show();
                         }
@@ -279,16 +241,16 @@ public class TournamentActivity extends AppCompatActivity
             }
             else
             {
-                Snackbar snack = Snackbar.make(findViewById(android.R.id.content), "You are either already in the tournament or you are the Creator of the Tournament", Snackbar.LENGTH_SHORT);
-                View snackView = snack.getView();
+                snack = Snackbar.make(findViewById(android.R.id.content), "You are either already in the tournament or you are the Creator of the Tournament", Snackbar.LENGTH_SHORT);
+                snackView = snack.getView();
                 snackView.setBackgroundColor(ContextCompat.getColor(TournamentActivity.this, R.color.colorPrimary));
                 snack.show();
             }
         }
         else if(selectedTournament.getTeilnehmer().size() == selectedTournament.getMaxTeilnehmer())
         {
-            Snackbar snack = Snackbar.make(findViewById(android.R.id.content), "You cannot Join. The tournament already reached its full capacity", Snackbar.LENGTH_SHORT);
-            View snackView = snack.getView();
+            snack = Snackbar.make(findViewById(android.R.id.content), "You cannot Join. The tournament already reached its full capacity", Snackbar.LENGTH_SHORT);
+            snackView = snack.getView();
             snackView.setBackgroundColor(ContextCompat.getColor(TournamentActivity.this, R.color.colorPrimary));
             snack.show();
         }
@@ -306,31 +268,21 @@ public class TournamentActivity extends AppCompatActivity
                     @Override
                     public void onClick(DialogInterface dialog, int which)
                     {
-                        MessageDigest digest = null;
-                        try
-                        {
-                            digest = MessageDigest.getInstance("SHA-256");
-                        }
-                        catch (NoSuchAlgorithmException e)
-                        {
-                            e.printStackTrace();
-                        }
-
-                        String password = Hasher.normalToHashedPassword(digest.digest(et_password.getText().toString().getBytes(StandardCharsets.UTF_8)));
+                        String password = Hasher.normalToHashedPassword(et_password.getText().toString());
                         if(password.equals(selectedTournament.getPassword()))
                         {
                             selectedTournament.addBenutzerToTournament(currentBenutzer);
                             tournamentsDataBase.child(selectedTournament.getName()).setValue(gson.toJson(selectedTournament));
 
-                            Snackbar snack = Snackbar.make(findViewById(android.R.id.content), "You joined the tournament", Snackbar.LENGTH_SHORT);
-                            View snackView = snack.getView();
+                            snack = Snackbar.make(findViewById(android.R.id.content), "You joined the tournament", Snackbar.LENGTH_SHORT);
+                            snackView = snack.getView();
                             snackView.setBackgroundColor(ContextCompat.getColor(TournamentActivity.this, R.color.colorPrimary));
                             snack.show();
                         }
                         else
                         {
-                            Snackbar snack = Snackbar.make(findViewById(android.R.id.content), "Wrong Password", Snackbar.LENGTH_SHORT);
-                            View snackView = snack.getView();
+                            snack = Snackbar.make(findViewById(android.R.id.content), "Wrong Password", Snackbar.LENGTH_SHORT);
+                            snackView = snack.getView();
                             snackView.setBackgroundColor(ContextCompat.getColor(TournamentActivity.this, R.color.colorPrimary));
                             snack.show();
                         }
@@ -341,8 +293,8 @@ public class TournamentActivity extends AppCompatActivity
             }
             else
             {
-                Snackbar snack = Snackbar.make(findViewById(android.R.id.content), "You are the Creator of the Tournament", Snackbar.LENGTH_SHORT);
-                View snackView = snack.getView();
+                snack = Snackbar.make(findViewById(android.R.id.content), "You are the Creator of the Tournament", Snackbar.LENGTH_SHORT);
+                snackView = snack.getView();
                 snackView.setBackgroundColor(ContextCompat.getColor(TournamentActivity.this, R.color.colorPrimary));
                 snack.show();
             }
@@ -376,8 +328,8 @@ public class TournamentActivity extends AppCompatActivity
                 }
             }
 
-            Snackbar snack = Snackbar.make(findViewById(android.R.id.content), text, Snackbar.LENGTH_SHORT);
-            View snackView = snack.getView();
+            snack = Snackbar.make(findViewById(android.R.id.content), text, Snackbar.LENGTH_SHORT);
+            snackView = snack.getView();
             snackView.setBackgroundColor(ContextCompat.getColor(TournamentActivity.this, R.color.colorPrimary));
             snack.show();
 

@@ -28,19 +28,9 @@ public class Friends implements Serializable
         friendRemoved.add(name);
     }
 
-    public void removeFriendRemoved(String name)
-    {
-        friendRemoved.remove(name);
-    }
-
     public void addFriendDenied(String name)
     {
         friendDenied.add(name);
-    }
-
-    public void removeFriendDenied(String name)
-    {
-        friendDenied.remove(name);
     }
 
     public List<String> getFriendDenied() {
@@ -55,11 +45,6 @@ public class Friends implements Serializable
     public void removeFriendRequest(String name)
     {
         friendRequests.remove(name);
-    }
-
-    public void removeFriend(String name)
-    {
-        friendList.remove(name);
     }
 
     public void addFriend(String name)

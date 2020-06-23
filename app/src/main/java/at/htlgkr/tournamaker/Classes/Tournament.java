@@ -2,9 +2,6 @@ package at.htlgkr.tournamaker.Classes;
 
 
 import java.io.Serializable;
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,16 +20,8 @@ public class Tournament implements Serializable
 
     public Tournament(int maxTeilnehmer, String name, String password, Games game, Benutzer creator)
     {
-        try
-        {
-            MessageDigest digest = MessageDigest.getInstance("SHA-256");
-            this.password = Hasher.normalToHashedPassword(digest.digest(password.getBytes(StandardCharsets.UTF_8)));
-        }
-        catch (NoSuchAlgorithmException e)
-        {
-            e.printStackTrace();
-        }
 
+        this.password = Hasher.normalToHashedPassword(password);
         this.maxTeilnehmer = maxTeilnehmer;
         this.name = name;
         this.game = game;
@@ -155,39 +144,19 @@ public class Tournament implements Serializable
         return teilnehmer;
     }
 
-    public void setTeilnehmer(List<Benutzer> teilnehmer) {
-        this.teilnehmer = teilnehmer;
-    }
-
     public List<Match> getRoundOf16() {
         return roundOf16;
-    }
-
-    public void setRoundOf16(List<Match> roundOf16) {
-        this.roundOf16 = roundOf16;
     }
 
     public List<Match> getQuarterFinals() {
         return quarterFinals;
     }
 
-    public void setQuarterFinals(List<Match> quarterFinals) {
-        this.quarterFinals = quarterFinals;
-    }
-
     public List<Match> getSemiFinals() {
         return semiFinals;
     }
 
-    public void setSemiFinals(List<Match> semiFinals) {
-        this.semiFinals = semiFinals;
-    }
-
     public List<Match> getFinals() {
         return finals;
-    }
-
-    public void setFinals(List<Match> finals) {
-        this.finals = finals;
     }
 }

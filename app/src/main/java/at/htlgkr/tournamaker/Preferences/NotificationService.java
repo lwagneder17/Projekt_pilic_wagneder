@@ -3,10 +3,8 @@ package at.htlgkr.tournamaker.Preferences;
 import android.app.IntentService;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
-import android.app.Service;
 import android.content.Intent;
 import android.graphics.Color;
-import android.os.IBinder;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;

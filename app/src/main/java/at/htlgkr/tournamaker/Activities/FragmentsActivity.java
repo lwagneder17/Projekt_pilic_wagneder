@@ -1,6 +1,5 @@
 package at.htlgkr.tournamaker.Activities;
 
-import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -31,9 +30,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import at.htlgkr.tournamaker.Classes.Benutzer;
+import at.htlgkr.tournamaker.Classes.Tournament;
 import at.htlgkr.tournamaker.Preferences.NotificationService;
 import at.htlgkr.tournamaker.R;
-import at.htlgkr.tournamaker.Classes.Tournament;
 
 public class FragmentsActivity extends AppCompatActivity
 {

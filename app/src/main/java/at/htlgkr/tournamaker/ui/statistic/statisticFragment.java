@@ -45,28 +45,25 @@ public class statisticFragment extends Fragment
 
 
         ImageView search = activityView.findViewById(R.id.searchButton);
-        search.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String tv_search = ((TextView) activityView.findViewById(R.id.tv_search)).getText().toString();
-                List<Benutzer> filtered;
-                if(tv_search.isEmpty() || tv_search.equals(" "))
-                {
-                    filtered = friends;
-                }
-                else
-                {
-                    filtered = friends
-                            .stream()
-                            .filter((b) -> b.getUsername().equals(tv_search))
-                            .collect(Collectors.toList());
-                }
-
-                friendsAdapter = new FriendsAdapter(getContext(), R.layout.frienditem_layout, filtered);
-
-                friendsListView.setAdapter(friendsAdapter);
-                friendsAdapter.notifyDataSetChanged();
+        search.setOnClickListener(v -> {
+            String tv_search = ((TextView) activityView.findViewById(R.id.tv_search)).getText().toString();
+            List<Benutzer> filtered;
+            if(tv_search.isEmpty() || tv_search.equals(" "))
+            {
+                filtered = friends;
             }
+            else
+            {
+                filtered = friends
+                        .stream()
+                        .filter((b) -> b.getUsername().equals(tv_search))
+                        .collect(Collectors.toList());
+            }
+
+            friendsAdapter = new FriendsAdapter(getContext(), R.layout.frienditem_layout, filtered);
+
+            friendsListView.setAdapter(friendsAdapter);
+            friendsAdapter.notifyDataSetChanged();
         });
 
 

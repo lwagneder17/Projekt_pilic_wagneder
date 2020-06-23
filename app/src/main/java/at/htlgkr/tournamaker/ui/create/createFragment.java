@@ -14,7 +14,6 @@ import androidx.fragment.app.Fragment;
 
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.storage.StorageReference;
 import com.google.gson.Gson;
 
 import java.util.Arrays;
@@ -23,8 +22,8 @@ import java.util.List;
 import at.htlgkr.tournamaker.Activities.FragmentsActivity;
 import at.htlgkr.tournamaker.Classes.Benutzer;
 import at.htlgkr.tournamaker.Classes.Games;
-import at.htlgkr.tournamaker.R;
 import at.htlgkr.tournamaker.Classes.Tournament;
+import at.htlgkr.tournamaker.R;
 
 
 /**
@@ -32,10 +31,8 @@ import at.htlgkr.tournamaker.Classes.Tournament;
  */
 public class createFragment extends Fragment
 {
-    private List<Benutzer> allBenutzer = FragmentsActivity.allBenutzer;
     private Benutzer currentBenutzer = FragmentsActivity.currentBenutzer;
     private static List<Tournament> allTournaments = FragmentsActivity.allTournaments;
-    private static StorageReference firebaseStorage = FragmentsActivity.firebaseStorage;
     private static DatabaseReference tournamentsDataBase = FragmentsActivity.tournamentsDataBase;
     private View activityView;
 
@@ -60,18 +57,13 @@ public class createFragment extends Fragment
 
 
         Button create = activityView.findViewById(R.id.create_button);
-        create.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onCreateClick();
-            }
-        });
+        create.setOnClickListener(v -> onCreateClick());
 
 
         return activityView;
     }
 
-    public void onCreateClick()
+    private void onCreateClick()
     {
         String tournamentName = ((TextView) activityView.findViewById(R.id.tv_tournamentName)).getText().toString();
         String tournamentPassword = ((TextView) activityView.findViewById(R.id.tv_tournamentPassword)).getText().toString();
