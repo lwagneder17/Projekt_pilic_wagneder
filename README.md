@@ -10,15 +10,15 @@ Lukas Wagneder
 # Stundenplan
 | Task | Stundenanzahl | Pilic | Wagneder |
 | :---:        |     :---:      |      :---:      |      :---:      |
-| Designentwurf und Firebase-Datenbank einrichten | 3 | 2 | 1 |
-| Register & Login | 5 | 3 | 2 |
-| Settings | 2 | 0 | 2 |
-| Implement Create Tournament | 4 | 1 | 3 |
-| Implement Searching for Tournaments | 9 | 5 | 4 |
-| Implement Friends and Friend-Requests | 4 | 2 | 2 |
-| Implement Statistics | 0 | 0 | 0 |
-| Code verbessern und Bugs entfernen | 0 | 0 | 0 |
-| Summe | 0 | 0 | 0 |
+| Designentwurf und Firebase-Datenbank einrichten | 6 | 4 | 2 |
+| Register & Login | 6 | 4 | 2 |
+| Settings | 4 | 1 | 3 |
+| Implement Create Tournament | 7 | 5 | 2 |
+| Implement Searching for Tournaments | 7 | 4 | 3 |
+| Implement Friends and Friend-Requests | 5 | 3 | 2 |
+| Implement Statistics | 4 | 0 | 4 |
+| Code verbessern und Bugs entfernen | 3 | 3 | 0 |
+| Summe | 42 | 24 | 18 |
 
 # Features
 * Turniere erstellen mit verschiedenen Größen
