@@ -16,19 +16,21 @@ public class Hasher
 
     public Hasher()
     {
-        try
-        {
-             digest = MessageDigest.getInstance("SHA-256");
-        }
-        catch (NoSuchAlgorithmException e)
-        {
-            e.printStackTrace();
-        }
+
     }
 
 
     public static String normalToHashedPassword(String password)
     {
+        try
+        {
+            digest = MessageDigest.getInstance("SHA-256");
+        }
+        catch (NoSuchAlgorithmException e)
+        {
+            e.printStackTrace();
+        }
+
         byte[] hash = digest.digest(password.getBytes(StandardCharsets.UTF_8));
 
         StringBuffer hexString = new StringBuffer();
